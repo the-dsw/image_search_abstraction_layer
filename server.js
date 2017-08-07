@@ -11,7 +11,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors())
 
-mongoose.connect('mongodb://image:image@ds137540.mlab.com:37540/apisearch' || 'mongodb://localhost/apiSearch')
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/apiSearch')
 
 app.get('/api/latest', (req, res, next)=> {
   apiSearch.find({}, (err, data)=> {
