@@ -3,7 +3,7 @@ const app = express()
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const mongoose = require('mongoose')
-const Bing = require('node-bing-api')({accKey: 'db63791f74064c3ca3a65570902162f5'})
+const Bing = require('node-bing-api')({accKey: 'YOUR_KEY_HERE'})
 const apiSearch = require('./models/apiSearch')
 const PORT = process.env.PORT || 3000
 
@@ -11,7 +11,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors())
 
-mongoose.connect('mongodb://image:image@ds137540.mlab.com:37540/apisearch')
+mongoose.connect('mongodb://image:image@ds137540.mlab.com:37540/apisearch' || 'mongodb://localhost/apiSearch')
 
 app.get('/api/latest', (req, res, next)=> {
   apiSearch.find({}, (err, data)=> {
@@ -33,11 +33,20 @@ app.get('/api/imagesearch/:search*', (req, res, next)=> {
 
   })
 
+  let sOffset
 
+  if(offset) {
+    if(offset === 1) {
+      offset = 0
+      sOffset = 1
+    } else if(offset > 1) {
+      sOffset = offset + 1
+    }
+  }
 
   Bing.images(search, {
-    top: 10
-
+    top: (10 * sOffset),
+    skip: (10 * offset)
   }, function(error, rew, body) {
     let bingArray = []
 
